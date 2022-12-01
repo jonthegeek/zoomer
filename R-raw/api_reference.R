@@ -44,3 +44,46 @@ methods
 
 # "/metrics/meetings/{meetingId}/participants/{participantId}/qos" feels like it
 # should be something like meeting_participant_qos.
+
+# Manually get a list of cloud recordings to figure out some rules, 'cuz that's
+# the one area I actually care about.
+
+# methods %>%
+#   dplyr::filter(
+#     stringr::str_starts(path, "/meetings/\\{meetingId\\}/recordings")
+#   ) %>%
+#   dplyr::pull(path)
+#
+# methods %>%
+#   dplyr::filter(
+#     stringr::str_starts(path, "/users/\\{userId\\}/recordings")
+#   ) %>%
+#   dplyr::glimpse()
+#
+# this_row <- methods %>%
+#   dplyr::filter(
+#     stringr::str_starts(path, "/users/\\{userId\\}/recordings")
+#   ) %>%
+#   head(1)
+
+# All of them begin with /, so we can just systematically skip
+# method_parts[[1]].
+
+# this_path <- this_row$path
+# r_file <- stringr::str_extract(this_path, "(?<=^\\/)[^/]+")
+# function_name = snakecase::to_snake_case(this_row$operationId)
+
+# Ooooooh, operationId is basically function name, except I want to make it
+# prettier.
+methods %>%
+  dplyr::mutate(
+    r_file = stringr::str_extract(path, "(?<=^\\/)[^/]+"),
+    function_name = snakecase::to_snake_case(operationId)
+    # method_parts = stringr::str_split(path, "/"),
+    # r_file = purrr::map_chr(method_parts, 2),
+    # idstuff = purrr::map_lgl(
+    #   method_parts,
+    #   ~any(stringr::str_detect(.x, "\\{"))
+  ) %>%
+  View()
+
