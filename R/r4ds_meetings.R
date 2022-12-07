@@ -18,7 +18,7 @@ all_recordings <- httr2::request(
   "https://api.zoom.us/v2/users/yntI9xIgSRCk0LvDdaAtIg/recordings"
 ) %>%
   httr2::req_auth_bearer_token(token$access_token) %>%
-  httr2::req_url_query(from = "2022-04-01") %>%
+  httr2::req_url_query(from = "2022-12-01") %>%
   httr2::req_perform() %>%
   httr2::resp_body_json()
 
