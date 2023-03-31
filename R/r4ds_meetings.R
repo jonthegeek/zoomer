@@ -1,4 +1,7 @@
-`%>%` <- magrittr::`%>%`
+library(httr2)
+library(fs)
+library(lubridate)
+library(stringr)
 
 client <- httr2::oauth_client(
   id = "sKSC6UBCRp6SZYkhgkgfRg",
@@ -16,63 +19,65 @@ token <- httr2::oauth_flow_auth_code(
 
 all_recordings <- httr2::request(
   "https://api.zoom.us/v2/users/yntI9xIgSRCk0LvDdaAtIg/recordings"
-) %>%
-  httr2::req_auth_bearer_token(token$access_token) %>%
-  httr2::req_url_query(from = "2022-12-01") %>%
-  httr2::req_perform() %>%
+) |>
+  httr2::req_auth_bearer_token(token$access_token) |>
+  httr2::req_url_query(from = "2023-01-01") |>
+  httr2::req_perform() |>
   httr2::resp_body_json()
 
 if (length(all_recordings$meetings)) {
   old_timeout <- options(timeout = 1000)
   for (meeting_num in seq_along(all_recordings$meetings)) {
-    for (
-      file_num in seq_along(
-        all_recordings$meetings[[meeting_num]]$recording_files
-      )
-    ) {
-      httr2::request(
-        all_recordings$meetings[[meeting_num]]$recording_files[[file_num]]$download_url
-      ) %>%
-        httr2::req_auth_bearer_token(token$access_token) %>%
-        httr2::req_perform() %>%
-        httr2::resp_body_raw() %>%
-        writeBin(
-          con = fs::path_home(
-            "Downloads",
-            paste(
-              all_recordings$meetings[[meeting_num]]$topic,
-              lubridate::date(
-                lubridate::with_tz(
-                  lubridate::ymd_hms(
-                    all_recordings$meetings[[meeting_num]]$start_time
-                  ),
-                  "America/Chicago"
-                )
+    this_meeting <- all_recordings$meetings[[meeting_num]]
+    this_meeting$ready_to_delete <- rep(
+      FALSE, length(this_meeting$recording_files)
+    )
+    for (file_num in seq_along(this_meeting$recording_files)) {
+      this_file <- this_meeting$recording_files[[file_num]]
+      if (this_file$status == "completed") {
+        # if (this_file$file_size > 490000000) {
+        #   message("File too large!")
+        #   next
+        # }
+
+        httr2::request(this_file$download_url) |>
+          httr2::req_auth_bearer_token(token$access_token) |>
+          httr2::req_perform() |>
+          httr2::resp_body_raw() |>
+          writeBin(
+            con = fs::path_home(
+              "Downloads",
+              paste(
+                this_meeting$topic,
+                lubridate::date(
+                  lubridate::with_tz(
+                    lubridate::ymd_hms(
+                      this_meeting$start_time
+                    ),
+                    "America/Chicago"
+                  )
+                ),
+                stringr::str_pad(meeting_num, 2, pad = "0"),
+                stringr::str_pad(file_num, 2, pad = "0"),
+                sep = "_"
               ),
-              sep = "_"
-            ),
-            ext = tolower(
-              all_recordings$meetings[[meeting_num]]$recording_files[[file_num]]$file_extension
+              ext = tolower(this_file$file_extension)
             )
           )
-        )
+        this_meeting$ready_to_delete[[file_num]] <- TRUE
+      }
     }
-  }
 
-  # THEN delete the recordings. Ideally we'd delete as we go, but the API
-  # appears to delete all recordings for a given meeting at once even though
-  # they're separate in the recording list.
-  for (meeting_num in seq_along(all_recordings$meetings)) {
-    # Delete that meeting's recordings.
-    httr2::request("https://api.zoom.us/v2/") %>%
-      httr2::req_url_path_append(
-        "meetings",
-        all_recordings$meetings[[meeting_num]]$uuid,
-        "recordings"
-      ) %>%
-      httr2::req_method("DELETE") %>%
-      httr2::req_auth_bearer_token(token$access_token) %>%
-      httr2::req_perform()
+    if (all(this_meeting$ready_to_delete)) {
+      # Delete the recording for this meeting.
+      httr2::request("https://api.zoom.us/v2/") |>
+        httr2::req_url_path_append("meetings", this_meeting$uuid, "recordings") |>
+        httr2::req_method("DELETE") |>
+        httr2::req_auth_bearer_token(token$access_token) |>
+        httr2::req_perform()
+    } else {
+      message("This meeting isn't ready yet!")
+    }
   }
   options(old_timeout)
 }
