@@ -1,2 +1,11 @@
 ^zoomer\.Rproj$
 ^\.Rproj\.user$
+^R-raw$
+^LICENSE\.md$
+^README\.Rmd$
+^\.github$
+^codecov\.yml$
+^data-raw$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

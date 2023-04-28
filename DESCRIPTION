@@ -2,17 +2,26 @@ Package: zoomer
 Title: Zoom API in R
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "Jon",
-           family = "Harmon",
-           role = c("aut", "cre"),
-           email = "jonthegeek@gmail.com",
+    person("Jon", "Harmon", , "jonthegeek@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-4781-4346"))
-Description: A consistent interface to the Zoom API, to allow management of Zoom 
-    conferencing from R.
+Description: A consistent interface to the Zoom API, to allow management
+    of Zoom conferencing from R.
 License: MIT + file LICENSE
+URL: https://github.com/jonthegeek/zoomer, https://jonthegeek.github.io/zoomer/
+BugReports: https://github.com/jonthegeek/zoomer/issues
+Depends: 
+    R (>= 2.10)
+Imports: 
+    cli,
+    httr2,
+    rlang,
+    utils
+Suggests: 
+    covr,
+    jsonlite,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
-URL: https://github.com/jonthegeek/zoomer
-BugReports: https://github.com/jonthegeek/zoomer/issues
+RoxygenNote: 7.2.3
