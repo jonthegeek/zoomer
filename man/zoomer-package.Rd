@@ -12,6 +12,7 @@ A consistent interface to the Zoom API, to allow management of Zoom conferencing
 Useful links:
 \itemize{
   \item \url{https://github.com/jonthegeek/zoomer}
+  \item \url{https://jonthegeek.github.io/zoomer/}
   \item Report bugs at \url{https://github.com/jonthegeek/zoomer/issues}
 }
 
