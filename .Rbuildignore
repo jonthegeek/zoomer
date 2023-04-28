@@ -5,3 +5,5 @@
 ^README\.Rmd$
 ^\.github$
 ^codecov\.yml$
+^yt_videos\.rds$
+^data-raw$
