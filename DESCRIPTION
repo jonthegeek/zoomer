@@ -14,10 +14,12 @@ Depends:
 Imports: 
     cli,
     httr2,
+    lifecycle,
     rlang,
     utils
 Suggests: 
     covr,
+    httptest2,
     jsonlite,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

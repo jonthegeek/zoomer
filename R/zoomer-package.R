@@ -2,6 +2,7 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom lifecycle badge
 #' @importFrom rlang %||%
 ## usethis namespace: end
 NULL
