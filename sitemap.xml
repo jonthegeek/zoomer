@@ -19,22 +19,55 @@
     <loc>https://jonthegeek.github.io/zoomer/news/index.html</loc>
   </url>
   <url>
-    <loc>https://jonthegeek.github.io/zoomer/reference/browse_zoom_app_management.html</loc>
+    <loc>https://jonthegeek.github.io/zoomer/reference/dot-api_authenticate.html</loc>
+  </url>
+  <url>
+    <loc>https://jonthegeek.github.io/zoomer/reference/dot-api_browse_oauth_app.html</loc>
+  </url>
+  <url>
+    <loc>https://jonthegeek.github.io/zoomer/reference/dot-api_client.html</loc>
+  </url>
+  <url>
+    <loc>https://jonthegeek.github.io/zoomer/reference/dot-api_get_token_noninteractive.html</loc>
+  </url>
+  <url>
+    <loc>https://jonthegeek.github.io/zoomer/reference/dot-api_req_authenticate.html</loc>
+  </url>
+  <url>
+    <loc>https://jonthegeek.github.io/zoomer/reference/dot-api_token_is_expired.html</loc>
+  </url>
+  <url>
+    <loc>https://jonthegeek.github.io/zoomer/reference/dot-chr2csv.html</loc>
   </url>
   <url>
     <loc>https://jonthegeek.github.io/zoomer/reference/dot-hack_refresh.html</loc>
   </url>
   <url>
-    <loc>https://jonthegeek.github.io/zoomer/reference/dot-str2csv.html</loc>
+    <loc>https://jonthegeek.github.io/zoomer/reference/dot-oauth-client.html</loc>
   </url>
   <url>
-    <loc>https://jonthegeek.github.io/zoomer/reference/dot-zoom_req_auth.html</loc>
+    <loc>https://jonthegeek.github.io/zoomer/reference/dot-oauth-parameters.html</loc>
+  </url>
+  <url>
+    <loc>https://jonthegeek.github.io/zoomer/reference/dot-oauth-req-auth.html</loc>
+  </url>
+  <url>
+    <loc>https://jonthegeek.github.io/zoomer/reference/dot-oauth-token.html</loc>
+  </url>
+  <url>
+    <loc>https://jonthegeek.github.io/zoomer/reference/dot-refresh_oauth_token.html</loc>
+  </url>
+  <url>
+    <loc>https://jonthegeek.github.io/zoomer/reference/dot-zoom_req_authenticate.html</loc>
   </url>
   <url>
     <loc>https://jonthegeek.github.io/zoomer/reference/index.html</loc>
   </url>
   <url>
     <loc>https://jonthegeek.github.io/zoomer/reference/zoom_authenticate.html</loc>
+  </url>
+  <url>
+    <loc>https://jonthegeek.github.io/zoomer/reference/zoom_browse_app_management.html</loc>
   </url>
   <url>
     <loc>https://jonthegeek.github.io/zoomer/reference/zoom_client.html</loc>

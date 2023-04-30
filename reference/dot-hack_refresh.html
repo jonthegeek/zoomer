@@ -43,7 +43,7 @@ into allowing us to refresh even when the refresh token changes."><!-- mathjax -
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Hack oauth_flow_refresh for revolving refresh_token</h1>
-      <small class="dont-index">Source: <a href="https://github.com/jonthegeek/zoomer/blob/HEAD/R/aaa_authentication.R" class="external-link"><code>R/aaa_authentication.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/jonthegeek/zoomer/blob/HEAD/R/aaa_auth_shared.R" class="external-link"><code>R/aaa_auth_shared.R</code></a></small>
       <div class="d-none name"><code>dot-hack_refresh.Rd</code></div>
     </div>
 
@@ -54,10 +54,7 @@ into allowing us to refresh even when the refresh token changes.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">.hack_refresh</span><span class="op">(</span></span>
-<span>  client <span class="op">=</span> <span class="fu"><a href="zoom_client.html">zoom_client</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  refresh_token <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"ZOOM_REFRESH_TOKEN"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">.hack_refresh</span><span class="op">(</span><span class="va">client</span>, <span class="va">refresh_token</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -67,15 +64,14 @@ into allowing us to refresh even when the refresh token changes.</p>
 
 
 <dt>refresh_token</dt>
-<dd><p>A refresh token. The default behavior is to look in a
-<code>ZOOM_REFRESH_TOKEN</code> environment variable.</p></dd>
+<dd><p>A refresh token associated with this <code>client</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>An <code><a href="https://httr2.r-lib.org/reference/oauth_token.html" class="external-link">httr2::oauth_token()</a></code>.</p>
+<p>A Zoom <code><a href="https://httr2.r-lib.org/reference/oauth_token.html" class="external-link">httr2::oauth_token()</a></code>, invisibly.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
