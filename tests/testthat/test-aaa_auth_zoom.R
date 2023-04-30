@@ -67,7 +67,11 @@ test_that(".zoom_req_authenticate adds the expected decorations", {
         # Make it last a long time so it effectively never expires, but can
         # still be checked.
         expires_in = 1e10,
-        .date = lubridate::ymd_hms("2023-01-01 00:00:00")
+        .date = as.POSIXct(
+          1672531200,
+          tz = "UTC",
+          origin = "1970-01-01 00:00.00 UTC"
+        )
       )
     )
   })

@@ -51,8 +51,8 @@
     Code
       .zoom_req_authenticate(httr2::request("fakeurl"), client = zoom_client("a", "b"),
       scopes = "recording:read", cache_disk = FALSE, cache_key = FALSE, token = httr2::oauth_token(
-        "a_fake_token", expires_in = 1e+10, .date = lubridate::ymd_hms(
-          "2023-01-01 00:00:00")))
+        "a_fake_token", expires_in = 1e+10, .date = as.POSIXct(1672531200, tz = "UTC",
+          origin = "1970-01-01 00:00.00 UTC")))
     Message <cliMessage>
       <httr2_request>
       GET fakeurl
