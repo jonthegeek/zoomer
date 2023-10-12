@@ -22,7 +22,7 @@
       token_url: https://zoom.us/oauth/token
       auth: oauth_client_req_auth_header
 
-# .zoom_req_authenticate adds the expected decorations
+# .zoom_req_authenticate adds decorations w/o token
 
     Code
       .zoom_req_authenticate(httr2::request("fakeurl"), client = zoom_client("a", "b"),
@@ -34,7 +34,7 @@
       Policies:
       * auth_oauth: a list
 
----
+# .zoom_req_authenticate adds decorations w/ simple token
 
     Code
       .zoom_req_authenticate(httr2::request("fakeurl"), client = zoom_client("a", "b"),
@@ -46,7 +46,7 @@
       * Authorization: '<REDACTED>'
       Body: empty
 
----
+# .zoom_req_authenticate adds decorations w/ full token
 
     Code
       .zoom_req_authenticate(httr2::request("fakeurl"), client = zoom_client("a", "b"),
