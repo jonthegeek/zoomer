@@ -33,7 +33,7 @@ test_that("zoom_client errors as expected", {
   )
 })
 
-test_that(".zoom_req_authenticate adds the expected decorations", {
+test_that(".zoom_req_authenticate adds decorations w/o token", {
   # We'll test actual requests separately; this just check that a request gets
   # decorated as expected, without actually performing the request.
   expect_snapshot({
@@ -45,6 +45,9 @@ test_that(".zoom_req_authenticate adds the expected decorations", {
       cache_key = FALSE
     )
   })
+})
+
+test_that(".zoom_req_authenticate adds decorations w/ simple token", {
   expect_snapshot({
     .zoom_req_authenticate(
       httr2::request("fakeurl"),
@@ -55,6 +58,9 @@ test_that(".zoom_req_authenticate adds the expected decorations", {
       token = "a_fake_token"
     )
   })
+})
+
+test_that(".zoom_req_authenticate adds decorations w/ full token", {
   expect_snapshot({
     .zoom_req_authenticate(
       httr2::request("fakeurl"),
