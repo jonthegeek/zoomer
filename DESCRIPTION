@@ -21,7 +21,7 @@ Suggests:
     covr,
     httptest2,
     jsonlite,
-    testthat (>= 3.0.0),
+    testthat (>= 3.2.0),
     withr
 Remotes:
     r-lib/httr2
