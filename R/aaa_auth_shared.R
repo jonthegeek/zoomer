@@ -73,7 +73,7 @@
       client = client,
       auth_url = .api_authorization_url,
       scope = scopes,
-      port = 8888L
+      redirect_uri = paste0(httr2::default_redirect_uri(), ":8888")
     )
   }
 
@@ -125,7 +125,7 @@
       cache_disk = cache_disk,
       cache_key = cache_key,
       pkce = FALSE,
-      port = 8888L
+      redirect_uri = paste0(httr2::default_redirect_uri(), ":8888")
     )
   )
 }
