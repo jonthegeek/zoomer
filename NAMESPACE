@@ -3,5 +3,6 @@
 export(zoom_authenticate)
 export(zoom_browse_app_management)
 export(zoom_client)
+importFrom(httpuv,decodeURI)
 importFrom(lifecycle,badge)
 importFrom(rlang,"%||%")

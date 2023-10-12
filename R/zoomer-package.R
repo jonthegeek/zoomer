@@ -2,6 +2,7 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom httpuv decodeURI
 #' @importFrom lifecycle badge
 #' @importFrom rlang %||%
 ## usethis namespace: end
