@@ -15,7 +15,7 @@
 A Zoom \code{\link[httr2:oauth_token]{httr2::oauth_token()}}, invisibly.
 }
 \description{
-This is a (hopefully) temporary hack to trick \code{\link[httr2:oauth_flow_refresh]{httr2::oauth_flow_refresh()}}
+This is a (hopefully) temporary hack to trick \code{\link[httr2:req_oauth_refresh]{httr2::oauth_flow_refresh()}}
 into allowing us to refresh even when the refresh token changes.
 }
 \keyword{internal}
