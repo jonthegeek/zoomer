@@ -184,9 +184,9 @@
     the[[key]]$refresh_token %||%
     Sys.getenv("ZOOM_REFRESH_TOKEN")
   if (nchar(refresh_token)) {
-    # Hopefully it's only temporary that I need to use the hacked version of
-    # this.
-    the[[key]] <- .hack_refresh(client, refresh_token)
+    the[[key]] <- suppressWarnings(
+      httr2::oauth_flow_refresh(client, refresh_token)
+    )
     return(the[[key]])
   }
   return(NULL)
@@ -208,7 +208,7 @@
   line_4_expected <- c(
     "if",
     "!is.null(token$refresh_token) && token$refresh_token != refresh_token",
-    "{\n    abort(\"Refresh token has changed! Please update stored value\")\n}"
+    "{\n    warn(\"Refresh token has changed! Please update stored value\")\n}"
   )
   if (!all(line_4_check == line_4_expected)) {
     cli::cli_abort("httr2::oauth_flow_refresh has changed.")
