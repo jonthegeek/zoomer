@@ -32,7 +32,8 @@
       GET fakeurl
       Body: empty
       Policies:
-      * auth_oauth: a list
+      * auth_sign: a list
+      * auth_oauth: TRUE
 
 # .zoom_req_authenticate adds decorations w/ simple token
 
