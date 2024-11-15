@@ -191,34 +191,3 @@
   }
   return(NULL)
 }
-
-#' Hack oauth_flow_refresh for revolving refresh_token
-#'
-#' This is a (hopefully) temporary hack to trick [httr2::oauth_flow_refresh()]
-#' into allowing us to refresh even when the refresh token changes.
-#'
-#' @inheritParams .oauth-parameters
-#' @inherit .oauth-token return
-#' @keywords internal
-.hack_refresh <- function(client,
-                          refresh_token) {
-  fn <- httr2::oauth_flow_refresh
-
-  line_4_check <- as.character(rlang::fn_body(fn)[[4]])
-  line_4_expected <- c(
-    "if",
-    "!is.null(token$refresh_token) && token$refresh_token != refresh_token",
-    "{\n    warn(\"Refresh token has changed! Please update stored value\")\n}"
-  )
-  if (!all(line_4_check == line_4_expected)) {
-    cli::cli_abort("httr2::oauth_flow_refresh has changed.")
-  }
-
-  rlang::fn_body(fn)[[4]] <- NULL
-  return(
-    fn(
-      client = client,
-      refresh_token = refresh_token
-    )
-  )
-}
