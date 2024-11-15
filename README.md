@@ -15,17 +15,26 @@ R.
 
 ## Installation
 
-You can install the released version of zoomer from
-[CRAN](https://CRAN.R-project.org) with:
+<div class="pkgdown-release">
+
+Install the released version of zoomer from
+[CRAN](https://cran.r-project.org/):
 
 ``` r
-# No you can't.
-# install.packages("zoomer")
+# Not yet!
+install.packages("zoomer")
 ```
 
-And the development version from [GitHub](https://github.com/) with:
+</div>
+
+<div class="pkgdown-devel">
+
+Install the development version of zoomer from
+[GitHub](https://github.com/):
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("jonthegeek/zoomer")
+# install.packages("pak")
+pak::pak("jonthegeek/zoomer")
 ```
+
+</div>
