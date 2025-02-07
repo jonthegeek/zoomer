@@ -44,7 +44,7 @@
       <httr2_request>
       GET fakeurl
       Headers:
-      * Authorization: '<REDACTED>'
+      * Authorization: "<REDACTED>"
       Body: empty
 
 # .zoom_req_authenticate adds decorations w/ full token
@@ -58,6 +58,6 @@
       <httr2_request>
       GET fakeurl
       Headers:
-      * Authorization: '<REDACTED>'
+      * Authorization: "<REDACTED>"
       Body: empty
 
