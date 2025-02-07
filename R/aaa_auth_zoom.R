@@ -2,11 +2,11 @@
 #'
 #' Launch the Zoom "Created Apps" page (where you can configure OAuth 2.0
 #' Clients). Navigate to "Develop > Build App" if you don't have an app, and
-#' choose "OAuth". Set the "OAuth allow list" to "http://localhost:8888". You'll
-#' also have to give the app allowed scopes. After you configure your app,
-#' copy/paste the Client ID and Client Secret into the `ZOOM_CLIENT_ID` and
-#' `ZOOM_CLIENT_ID` environment variables. We recommend placing these
-#' environment variables in your `.Renviron` file.
+#' choose "OAuth". Set the "OAuth allow list" to
+#' "http://localhost:8888/authorize/". You'll also have to give the app allowed
+#' scopes. After you configure your app, copy/paste the Client ID and Client
+#' Secret into the `ZOOM_CLIENT_ID` and `ZOOM_CLIENT_ID` environment variables.
+#' We recommend placing these environment variables in your `.Renviron` file.
 #'
 #' @return The url of the "Created Apps" page, invisibly.
 #' @export
