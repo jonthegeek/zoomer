@@ -1,0 +1,33 @@
+# zoomer
+
+The goal of zoomer is to make it easy to interact with the Zoom API from
+R.
+
+## Installation
+
+Install the development version of zoomer from
+[GitHub](https://github.com/):
+
+``` r
+
+# install.packages("pak")
+pak::pak("jonthegeek/zoomer")
+```
+
+# Package index
+
+## All functions
+
+- [`.oauth-client`](https://jonthegeek.github.io/zoomer/dev/reference/dot-oauth-client.md)
+  : OAuth client documentation
+- [`.oauth-req-auth`](https://jonthegeek.github.io/zoomer/dev/reference/dot-oauth-req-auth.md)
+  : OAuth request authentication documentation
+- [`.oauth-token`](https://jonthegeek.github.io/zoomer/dev/reference/dot-oauth-token.md)
+  : OAuth token documentation
+- [`zoom_authenticate()`](https://jonthegeek.github.io/zoomer/dev/reference/zoom_authenticate.md)
+  **\[questioning\]** : Authenticate with a Zoom OAuth client
+- [`zoom_browse_app_management()`](https://jonthegeek.github.io/zoomer/dev/reference/zoom_browse_app_management.md)
+  : Visit Zoom Created Apps
+- [`zoom_client()`](https://jonthegeek.github.io/zoomer/dev/reference/zoom_client.md)
+  : Construct a Zoom OAuth client
+

@@ -1,0 +1,8 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles: {}
+last_built: 2026-07-29T11:32Z
+urls:
+  reference: https://jonthegeek.github.io/zoomer/reference
+  article: https://jonthegeek.github.io/zoomer/articles
