@@ -33,18 +33,20 @@ test_that("zoom_client errors as expected", {
   )
 })
 
-test_that(".zoom_req_authenticate adds decorations w/o token", {
-  # We'll test actual requests separately; this just check that a request gets
-  # decorated as expected, without actually performing the request.
-  expect_snapshot({
+test_that(".zoom_req_authenticate errors when no token is available non-interactively", {
+  # In a non-interactive session with no cached token, authentication should
+  # fail immediately with a helpful error rather than hanging.
+  rlang::local_interactive(FALSE)
+  expect_error(
     .zoom_req_authenticate(
       httr2::request("fakeurl"),
       client = zoom_client("a", "b"),
       scopes = "recording:read",
       cache_disk = FALSE,
       cache_key = FALSE
-    )
-  })
+    ),
+    class = "zoom_auth_required"
+  )
 })
 
 test_that(".zoom_req_authenticate adds decorations w/ simple token", {

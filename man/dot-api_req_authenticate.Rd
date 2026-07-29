@@ -13,9 +13,8 @@
 
 \item{scopes}{A character vector of allowed scopes, such as "recording:read".}
 
-\item{cache_disk}{Should the access token be cached on disk? Cached tokens
-are encrypted and automatically deleted 30 days after creation. See
-\code{\link[httr2:req_oauth_auth_code]{httr2::req_oauth_auth_code()}}.}
+\item{cache_disk}{Deprecated; no longer used. Token caching is handled
+in-memory via the package environment. Kept for backward compatibility.}
 
 \item{cache_key}{If you are authenticating with multiple users using the same
 client, use this key to differentiate between those users.}

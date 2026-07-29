@@ -3,9 +3,8 @@
 #' These parameters are used in multiple authentication functions. Define them
 #' here so they're consistent.
 #'
-#' @param cache_disk Should the access token be cached on disk? Cached tokens
-#'   are encrypted and automatically deleted 30 days after creation. See
-#'   [httr2::req_oauth_auth_code()].
+#' @param cache_disk Deprecated; no longer used. Token caching is handled
+#'   in-memory via the package environment. Kept for backward compatibility.
 #' @param cache_key If you are authenticating with multiple users using the same
 #'   client, use this key to differentiate between those users.
 #' @param client A Zoom OAuth client created with [zoom_client()].
