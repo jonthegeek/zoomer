@@ -18,8 +18,10 @@ Imports:
     httr2 (>= 1.0.0),
     lifecycle,
     rlang,
+    stbl (>= 0.3.0.9000),
     utils
 Suggests:
+    astgrepr,
     covr,
     httptest2,
     jsonlite,

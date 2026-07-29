@@ -11,3 +11,4 @@
 ^pkgdown$
 ^\.positai$
 ^\.claude$
+^AGENTS\.md$
