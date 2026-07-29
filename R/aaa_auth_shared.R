@@ -16,6 +16,176 @@
   return(invisible(app_mgmt_url))
 }
 
+#' Local OAuth redirect port
+#'
+#' Returns the local port for the httpuv redirect-capture server. Customize
+#' via `options(zoom.redirect_port = <integer>)`. Default is `1410`. Must
+#' match the port your Cloudflare Worker (or equivalent relay) forwards to.
+#'
+#' @return An integer scalar.
+#' @keywords internal
+.api_local_port <- function() {
+  as.integer(getOption("zoom.redirect_port", 1410L))
+}
+
+#' OAuth relay URL registered with Zoom
+#'
+#' Returns the publicly reachable redirect URI registered in the Zoom app
+#' config (e.g. a Cloudflare Worker URL). Set via
+#' `options(zoom.redirect_url = "https://...")`. The relay must forward
+#' incoming requests to `http://localhost:{port}/callback`, reading the port
+#' from the `state` query parameter (format `"{port}:{nonce}"`).
+#'
+#' @return A character scalar URL, or an error if not configured.
+#' @keywords internal
+.api_relay_url <- function() {
+  url <- getOption("zoom.redirect_url")
+  if (is.null(url)) {
+    cli::cli_abort(
+      c(
+        "No OAuth relay URL configured.",
+        "i" = "Set {.code options(zoom.redirect_url = 'https://...')} in your {.file .Rprofile}.",
+        "i" = "See {.fn zoom_browse_app_management} for setup instructions."
+      ),
+      class = "zoom_redirect_url_missing"
+    )
+  }
+  url
+}
+
+#' Parse a URL query string into a named list
+#'
+#' @param qs A raw query string (with or without a leading `?`).
+#' @return A named list of decoded key-value pairs.
+#' @keywords internal
+.parse_query_string <- function(qs) {
+  qs <- sub("^[?]", "", qs %||% "")
+  if (!nchar(qs)) {
+    return(list())
+  }
+  pairs <- strsplit(qs, "&", fixed = TRUE)[[1L]]
+  result <- list()
+  for (pair in pairs) {
+    kv <- strsplit(pair, "=", fixed = TRUE)[[1L]]
+    if (length(kv) >= 1L) {
+      key <- httpuv::decodeURIComponent(kv[[1L]])
+      val <- if (length(kv) >= 2L) httpuv::decodeURIComponent(kv[[2L]]) else ""
+      result[[key]] <- val
+    }
+  }
+  result
+}
+
+#' Interactive OAuth authorization-code flow via local server
+#'
+#' Starts a local HTTP server (via httpuv) to capture the OAuth redirect,
+#' opens the browser for the user to authorize, and exchanges the returned code
+#' for a token. The token is cached in-memory.
+#'
+#' Zoom does not permit localhost redirect URIs, so a publicly reachable relay
+#' (e.g. a Cloudflare Worker) must be registered as the redirect URL in the
+#' Zoom app config. The relay reads the local port from the `state` parameter
+#' (format `"{port}:{nonce}"`) and issues a 302 to
+#' `http://localhost:{port}/callback`, where httpuv captures the code.
+#'
+#' @inheritParams .oauth-parameters
+#' @return An [httr2::oauth_token()], invisibly.
+#' @keywords internal
+.api_oauth_interactive <- function(client, scopes, cache_key = NULL) {
+  # nocov start
+  port <- .api_local_port()
+  relay_url <- .api_relay_url()
+
+  # Encode the local port in the state so the relay knows where to forward.
+  # Format: "{port}:{32-char nonce}". The nonce provides CSRF protection;
+  # the port prefix is for relay routing only.
+  nonce <- paste(sample(c(letters, LETTERS, 0:9), 32L, replace = TRUE), collapse = "")
+  state_val <- paste0(port, ":", nonce)
+
+  auth_url <- paste0(
+    .api_authorization_url,
+    "?response_type=code",
+    "&client_id=", utils::URLencode(client$id, reserved = TRUE),
+    "&redirect_uri=", utils::URLencode(relay_url, reserved = TRUE),
+    "&scope=", utils::URLencode(scopes, reserved = TRUE),
+    "&state=", utils::URLencode(state_val, reserved = TRUE)
+  )
+
+  code <- NULL
+
+  server <- httpuv::startServer("127.0.0.1", port, list(
+    call = function(req) {
+      if (req$PATH_INFO == "/callback") {
+        params <- .parse_query_string(req$QUERY_STRING)
+        if (identical(params$state, state_val) && !is.null(params$code)) {
+          code <<- params$code
+          body <- paste0(
+            "<!DOCTYPE html><html><body style='font-family:sans-serif;",
+            "text-align:center;padding:3em'>",
+            "<h1>\u2713 Authorization complete</h1>",
+            "<p>You may close this tab and return to R.</p>",
+            "</body></html>"
+          )
+        } else {
+          body <- paste0(
+            "<!DOCTYPE html><html><body style='font-family:sans-serif;",
+            "text-align:center;padding:3em'>",
+            "<h1>\u26a0 Authorization failed</h1>",
+            "<p>State mismatch or missing code. Please try again.</p>",
+            "</body></html>"
+          )
+        }
+      } else {
+        body <- ""
+      }
+      list(
+        status = 200L,
+        headers = list("Content-Type" = "text/html; charset=utf-8"),
+        body = body
+      )
+    }
+  ))
+  on.exit(httpuv::stopServer(server), add = TRUE)
+
+  cli::cli_inform("Opening browser for Zoom authorization\u2026")
+  utils::browseURL(auth_url)
+  cli::cli_inform(c(
+    "i" = "Waiting for browser redirect (2 min timeout)\u2026",
+    "i" = "Press {.kbd Ctrl+C} to cancel."
+  ))
+
+  deadline <- Sys.time() + 120
+  while (is.null(code) && Sys.time() < deadline) {
+    httpuv::service(100L)
+  }
+
+  if (is.null(code)) {
+    cli::cli_abort("Authorization timed out.", class = "zoom_auth_timeout")
+  }
+
+  # The redirect_uri in the token exchange must match what was sent to Zoom.
+  resp <- httr2::request(.api_token_url) |>
+    httr2::req_auth_basic(client$id, client$secret) |>
+    httr2::req_body_form(
+      grant_type = "authorization_code",
+      code = code,
+      redirect_uri = relay_url
+    ) |>
+    httr2::req_perform() |>
+    httr2::resp_body_json()
+
+  token <- httr2::oauth_token(
+    access_token = resp$access_token,
+    token_type = resp[["token_type"]] %||% "bearer",
+    expires_in = resp[["expires_in"]],
+    refresh_token = resp[["refresh_token"]]
+  )
+
+  the[[rlang::hash(c(client$name, cache_key))]] <- token
+  return(invisible(token))
+  # nocov end
+}
+
 #' Construct an OAuth client
 #'
 #' @inheritParams .oauth-parameters
@@ -69,12 +239,7 @@
 
   if (rlang::is_interactive() && is.null(token)) {
     scopes <- .chr2csv(scopes)
-    token <- httr2::oauth_flow_auth_code(
-      client = client,
-      auth_url = .api_authorization_url,
-      scope = scopes,
-      redirect_uri = paste0(httr2::oauth_redirect_uri(), ":8888/authorize/")
-    )
+    token <- .api_oauth_interactive(client, scopes, cache_key = cache_key)
   }
 
   the[[rlang::hash(c(client$name, cache_key))]] <- token
@@ -104,30 +269,25 @@
     }
   }
 
-  # If cache_disk is TRUE, we need to let httr2 deal with things; we can't dig
-  # into that cache without digging into unexported httr2 functions (and thus
-  # implementation might change).
-  if (!cache_disk) {
-    token <- .api_get_token_noninteractive(client, cache_key = cache_key)
-    if (!is.null(token)) {
-      return(httr2::req_auth_bearer_token(request, token$access_token))
-    }
+  token <- .api_get_token_noninteractive(client, cache_key = cache_key)
+  if (!is.null(token)) {
+    return(httr2::req_auth_bearer_token(request, token$access_token))
+  }
+
+  if (!rlang::is_interactive()) {
+    cli::cli_abort(
+      c(
+        "No token found and session is non-interactive.",
+        "i" = "Call {.fn zoom_authenticate} before starting your script.",
+        "i" = "Or pass a {.arg token} directly."
+      ),
+      class = "zoom_auth_required"
+    )
   }
 
   scopes <- .chr2csv(scopes)
-
-  return(
-    httr2::req_oauth_auth_code(
-      req = request,
-      client = client,
-      auth_url = .api_authorization_url,
-      scope = scopes,
-      cache_disk = cache_disk,
-      cache_key = cache_key,
-      pkce = FALSE,
-      redirect_uri = paste0(httr2::oauth_redirect_uri(), ":8888/authorize/")
-    )
-  )
+  token <- .api_oauth_interactive(client, scopes, cache_key = cache_key)
+  return(httr2::req_auth_bearer_token(request, token$access_token))
 }
 
 #' Is a token expired?

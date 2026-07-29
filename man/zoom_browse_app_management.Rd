@@ -12,11 +12,25 @@ The url of the "Created Apps" page, invisibly.
 \description{
 Launch the Zoom "Created Apps" page (where you can configure OAuth 2.0
 Clients). Navigate to "Develop > Build App" if you don't have an app, and
-choose "OAuth". Set the "OAuth allow list" to
-"http://localhost:8888/authorize/". You'll also have to give the app allowed
-scopes. After you configure your app, copy/paste the Client ID and Client
-Secret into the \code{ZOOM_CLIENT_ID} and \code{ZOOM_CLIENT_ID} environment variables.
-We recommend placing these environment variables in your \code{.Renviron} file.
+choose "OAuth".
+}
+\details{
+\strong{One-time relay setup} (Zoom no longer accepts localhost redirect URIs):
+\enumerate{
+\item Create a \href{https://workers.cloudflare.com/}{Cloudflare Worker} using the
+script in \code{system.file("cloudflare/oauth-relay.js", package = "zoomer")}.
+The Worker reads the local port from the OAuth \code{state} parameter and
+issues a \code{302} redirect to \verb{http://localhost:\{port\}/callback}.
+\item Set the Zoom app's \strong{OAuth Redirect URL} to your Worker's URL
+(e.g. \verb{https://zoomer-oauth.your-handle.workers.dev/callback}).
+\item Add \code{options(zoom.redirect_url = "https://...")} to your \code{.Rprofile}.
+Optionally set \code{options(zoom.redirect_port = 1410L)} if you need a
+non-default local port.
+}
+
+After configuring your app, copy/paste the Client ID and Client Secret into
+the \code{ZOOM_CLIENT_ID} and \code{ZOOM_CLIENT_SECRET} environment variables. We
+recommend placing these in your \code{.Renviron} file.
 }
 \examples{
 zoom_app_mgmt_url <- zoom_browse_app_management()
